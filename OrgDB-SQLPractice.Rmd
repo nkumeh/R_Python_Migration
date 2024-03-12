@@ -1,0 +1,53 @@
+---
+title: "Practice SQL with {sql} Chunks"
+author: "Martin Schedlbauer"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+library(RSQLite)
+
+# the path below is a Windows path specification
+# on MacOS there is no c:/
+fpath = "c:/Users/mjs01/Downloads/Recitation/"
+dbfile = "orgdb.db"
+
+dbcon <- dbConnect(RSQLite::SQLite(), paste0(fpath,dbfile))
+```
+
+Turn on support for foreign key constraint checking
+
+```{sql connection=dbcon}
+PRAGMA foreign_keys = ON
+```
+
+```{sql connection=dbcon}
+select * from Worker
+```
+
+```{sql connection=dbcon, output.var="workers.df"}
+select * from Worker
+```
+
+```{r}
+print(workers.df)
+```
+
+```{r}
+sqlcmd <- "select * from Worker"
+workers.df <- dbGetQuery(con = dbcon, sqlcmd)
+print(workers.df)
+```
+
+```{r}
+dbListTables(dbcon)
+dbListFields(dbcon, "Worker")
+```
+
+
+```{r}
+dbDisconnect(dbcon)
+```
+
